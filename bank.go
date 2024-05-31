@@ -1,10 +1,16 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"os"
+	"strconv"
+)
+
+const file string = "balance.txt"
 
 func main() {
 
-	var accountBalance float64 = 1000
+	var accountBalance float64 = readBalanceFromFile()
 
 	for {
 
@@ -33,6 +39,7 @@ func main() {
 			}
 
 			accountBalance += deposit
+			writeBalanceToFile(accountBalance)
 			fmt.Println("Balance updated! New amount:", accountBalance)
 		case 3:
 			var withdraw float64
@@ -48,6 +55,7 @@ func main() {
 			}
 
 			accountBalance -= withdraw
+			writeBalanceToFile(accountBalance)
 			fmt.Println("Balance updated! New amount:", accountBalance)
 		default:
 			fmt.Println("Goodbye!")
@@ -55,4 +63,16 @@ func main() {
 			return
 		}
 	}
+}
+
+func writeBalanceToFile(balance float64) {
+	balanceTxt := fmt.Sprint(balance)
+	os.WriteFile(file, []byte(balanceTxt), 0644)
+}
+
+func readBalanceFromFile() float64 {
+	data, _ := os.ReadFile(file)
+	balanceTxt := string(data)
+	balance, _ := strconv.ParseFloat(balanceTxt, 64)
+	return balance
 }
